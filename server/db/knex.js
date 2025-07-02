@@ -3,8 +3,8 @@
 
 //this way we can import this knex file to execute the queries
 
-const env = process.env.NODE_ENV; //development shhh
-const config = require("../knexfile")[env];
+const env = process.env.NODE_ENV || "development"; //development shhh
+const config = require("../knexfile.js")[env];
 module.exports = require("knex")(config);
 
 /* Instead of writing to code above 20 different times in different files

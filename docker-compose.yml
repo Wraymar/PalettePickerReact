@@ -1,37 +1,56 @@
+# top level key `services` to define the services that will run in the Docker containers.
 services:
   db:
+    # uses the official postgres image from Docker Hub
     image: postgres:16
+    # loads the env variables from the .env file into the container
+    # the variables are uses to configure the database connection details
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      # maps the local port 5432 to the container's port 5432
     ports:
       - "5432:5432"
 
   server:
+    # builds the docker image from the Dockerfile in the server directory
     build: ./server
+    # loads the env variables from the .env file into container(used by to connect to DB)
     env_file:
       - ./server/.env
+    # ensure the server waits for the database to be ready before starting
     depends_on:
       - db
+      # exposes port 8080 from local machine to the container //maps the local port to the container port
+      # when you go to http://localhost:8080 in your browser, it will connect to the server running in the container
     ports:
       - "8080:8080"
+      # mounts the entire server directory into the container
+    # so that changes made locally are reflected in the container
     volumes:
       - ./server:/app
     working_dir: /app
+    # runs the server in dev mode (live reload using nodemon)
+    # this command is defined in the package.json file of the server directory
     command: npm run dev
 
   client:
     build: ./app
     ports:
       - "5173:5173"
+      # mounts the app directory into the container so that changes made locally are
+      # reflected in the container, also mounts the node_modules is not overwritten by the local
+      # directory when the container is started
     volumes:
       - ./app:/app
       - /app/node_modules
     depends_on:
       - server
 
+# defines the named volume that will be used to persist the database data
+# this allows the data to persist even if the container is removed
 volumes:
   postgres-data:

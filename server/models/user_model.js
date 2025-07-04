@@ -8,7 +8,9 @@ class User {
   }
 
   //we want each user to have access to a method that checks if the password matches
-  isAValidPassword(password) {
+  async isAValidPassword(password) {
+    const user = await User.findUser(this.username);
+    const result = user.password;
     return this.password === password;
   }
 

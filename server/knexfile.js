@@ -13,9 +13,11 @@ When we deploy in "production", we'll provide a PG_CONNECTION_STRING
 
 module.exports = {
   development: {
+    //database
     client: "pg",
+    //connection details, use the connection string or these settings
     connection: process.env.PG_CONNECTION_STRING || {
-      host: process.env.PG_HOST, // "127.0.0.1",
+      host: process.env.DB_HOST, // "127.0.0.1",
       port: process.env.DB_PORT, //5432,
       user: process.env.DB_USER, //"postgres",
       password: process.env.DB_PASSWORD, //"postgres",

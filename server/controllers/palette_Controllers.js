@@ -9,7 +9,10 @@ exports.listPalettes = async (req, res) => {
 };
 
 exports.createPalette = async (req, res) => {
-  const { user_id, title, colors, temperature } = req.body;
+  console.log(req.body);
+  const { title, colors, temperature } = req.body;
+  const { id } = req.params;
+  const user_id = id;
 
   const createdPalette = await Palette.createPalette(
     user_id,
@@ -28,7 +31,7 @@ exports.findByUser = async (req, res) => {
   const foundPalettes = await Palette.findByUser(id);
   if (!foundPalettes) {
     console.log("Failed to get palettes");
-    res.send("Failed to get palettes");
+    return res.send("Failed to get palettes");
   }
   res.send(foundPalettes);
 };

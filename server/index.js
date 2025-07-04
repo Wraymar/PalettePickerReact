@@ -9,7 +9,24 @@ const {
   createPalette,
 } = require("./controllers/palette_Controllers");
 
+app.use(express.json());
 app.use(logRoutes);
+
+// Add CORS middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 //your page will try to get home ('/') the moment you mount the app
 //here we tell express what to do when we get to the home page '/'
@@ -21,21 +38,13 @@ app.get("/", (req, res) => {
 app.post("/api/login", logInUser);
 
 //palettes
-app.post("/api/palettes/:id/create", createPalette);
+app.post("/api/users/:id/palettes/create", createPalette);
 
 //list all palettes
 app.get("/api/palettes", listPalettes);
 
 //get palettes from a specific user
 app.get("/api/users/:id/palettes", findByUser);
-
-app.patch("/api/users/:id/palettes", (req, res) => {
-  res.send("here is the palette");
-});
-
-app.delete("/api/user/:id/palettes", (req, res) => {
-  res.send("deleted palette");
-});
 
 //use the port from the env file first, if not found then use 8080
 const port = process.env.PORT || 8080;
